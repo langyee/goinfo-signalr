@@ -1,11 +1,19 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using signalr.Services;
 
 namespace signalr.Hubs
 {
     public class MessageHub : Hub
     {
+        private IActiveUserCollection _activeUserCollection;
+
+        public MessageHub(IActiveUserCollection activeUserCollection)
+        {
+            _activeUserCollection = activeUserCollection;
+        }
+
         public Task SendMessageToAll(string message)
         {
             return Clients.All.SendAsync("ReceiveMessage", message);
@@ -18,6 +26,9 @@ namespace signalr.Hubs
 
         public Task JoinGroup(string group)
         {
+            var rand = new Random();
+            var randomId = rand.Next(100);
+            _activeUserCollection.NewUserLoggedIn(randomId, $"User {randomId}");
             return Groups.AddToGroupAsync(Context.ConnectionId, group);
         }
 
