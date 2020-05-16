@@ -42,14 +42,18 @@ document.getElementById("sendButton").addEventListener("click", function(event) 
     var groupElement = document.getElementById("group");
     var groupValue = groupElement.options[groupElement.selectedIndex].value;
     
-    var method = "SendMessageToAll";
-    if (groupValue === "Myself") {
-        method = "SendMessageToCaller";
+    if (groupValue === "All" || groupValue === "Myself") {
+        var method = groupValue === "All" ? "SendMessageToAll" : "SendMessageToCaller";
+
+        connection.invoke(method, message).catch(function (err) {
+            return console.error(err.ToString());
+        });
+    } else {
+        connection.invoke("SendMessageToUser", groupValue, message).catch(function(err) {
+            return console.error(err.ToString());
+        })
     }
 
-    connection.invoke(method, message).catch(function (err) {
-        return console.error(err.ToString());
-    });
 
     event.preventDefault();
 })
