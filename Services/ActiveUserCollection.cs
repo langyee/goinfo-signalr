@@ -12,12 +12,19 @@ namespace signalr.Services
             get { return _activeUsers; }
         }
 
-        public void NewUserLoggedIn(int id, string username)
+        public User NewUserLoggedIn(int id, string username, string connectionId)
         {
             if (ActiveUsers.Any(user => user.Id == id))
-                return;
+                return null;
 
-            ActiveUsers.Add(new User { Id = id, Username = username });
+            var newUser = new User 
+            { 
+                Id = id, 
+                Username = username,
+                ConnectionId = connectionId
+            };
+            ActiveUsers.Add(newUser);
+            return newUser;
         }
 
         public void UserLoggedOut(int id)

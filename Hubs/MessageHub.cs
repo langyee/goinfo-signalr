@@ -26,9 +26,6 @@ namespace signalr.Hubs
 
         public Task JoinGroup(string group)
         {
-            var rand = new Random();
-            var randomId = rand.Next(100);
-            _activeUserCollection.NewUserLoggedIn(randomId, $"User {randomId}");
             return Groups.AddToGroupAsync(Context.ConnectionId, group);
         }
 
@@ -40,6 +37,23 @@ namespace signalr.Hubs
         public Task SendMessageToUser(string connectionId, string message)
         {
             return Clients.Client(connectionId).SendAsync("ReceiveMessage", message);
+        }
+
+        public Task SendNewUserLoginMessage()
+        {
+            var rand = new Random();
+            var randomId = rand.Next(100);
+            var newUser = 
+                _activeUserCollection.NewUserLoggedIn(
+                    randomId, 
+                    $"User {randomId}",
+                    Context.ConnectionId
+                );
+
+            if (newUser != null)
+                return Clients.All.SendAsync("NewUserLoggedIn", _activeUserCollection.ActiveUsers);
+            
+            return null;
         }
 
         public override async Task OnConnectedAsync()

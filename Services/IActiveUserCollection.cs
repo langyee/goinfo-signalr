@@ -7,7 +7,7 @@ namespace signalr.Services
     {
         List<User> ActiveUsers { get; }
         
-        void NewUserLoggedIn(int id, string username);
+        User NewUserLoggedIn(int id, string username, string connectionId);
         void UserLoggedOut(int id);
     }
 }

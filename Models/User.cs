@@ -7,6 +7,7 @@ namespace signalr.Models
     {
         public int Id { get; set; }
         public string Username { get; set; }
+        public string ConnectionId { get; set; }
         public DateTime ConnectedAt { get; private set; }
 
         public User()

@@ -1,5 +1,13 @@
 "use strict";
 
+class User {
+    constructor(id, username, connectedAt) {
+        this.id = id;
+        this.username = username;
+        this.connectedAt = connectedAt;
+    }
+}
+
 var connection = new signalR.HubConnectionBuilder()
                     .withUrl("/messages")
                     .build();
@@ -12,6 +20,13 @@ connection.on("ReceiveMessage", function(message) {
     var div = document.createElement("div");
     div.innerHTML = msg + "<hr/>";
     document.getElementById("messages").appendChild(div);
+});
+
+connection.on("NewUserLoggedIn", (users) => {
+    for(let i = 0; i < users.length; i++) {
+        let user = users[i]; 
+        console.log(`${i}: ${user.username} logged in at ${user.connectedAt} for connection ${user.connectionId}`);
+    }
 });
 
 connection.on("UserConnected", function(connectionId) {
@@ -33,6 +48,8 @@ connection.on("UserDisconnected", function(connectionId) {
 
 connection.start().then(function () {
     document.getElementById("sendButton").disabled = false;
+    connection.invoke("SendNewUserLoginMessage")
+        .catch(err => console.error(err.toString()) );
 }).catch(function (err) {
     return console.error(err.toString());
 });
