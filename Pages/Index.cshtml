@@ -8,10 +8,15 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 
+    <div>
+        <input type="button" id="joinGroup" value="Join Private Group"/>
+    </div>
+
     <textarea name="message" id="message"></textarea>
     <select id="group">
         <option value="All">Everyone</option>
         <option value="Myself">Myself</option>
+        <option value="PrivateGroup">Private Group</option>
     </select>
     <input type="button" id="sendButton" value="Send Message"/>
     <div id="messages"></div>
