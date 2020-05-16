@@ -22,7 +22,7 @@ connection.on("UserConnected", function(connectionId) {
     groupElement.add(option);
 });
 
-connection.on("userDisconnected", function(connectionId) {
+connection.on("UserDisconnected", function(connectionId) {
     var groupElement = document.getElementById("group");
     for(var i = 0; i < groupElement.clientHeight; i++) {
         if (groupElement.options[i].value == connectionId) {
