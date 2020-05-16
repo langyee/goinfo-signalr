@@ -56,6 +56,16 @@ namespace signalr.Hubs
             return null;
         }
 
+        public Task StoreNewUserLogin(int id, string username)
+        {
+            var newUser = _activeUserCollection.NewUserLoggedIn(id, username, Context.ConnectionId);
+
+            if (newUser != null)
+                return Clients.All.SendAsync("NewUserLoggedIn", _activeUserCollection.ActiveUsers);
+
+            return null;
+        }
+
         public override async Task OnConnectedAsync()
         {
             await Clients.All.SendAsync("UserConnected", Context.ConnectionId);
