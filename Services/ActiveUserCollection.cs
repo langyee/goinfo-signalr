@@ -14,8 +14,12 @@ namespace signalr.Services
 
         public User NewUserLoggedIn(int id, string username, string connectionId)
         {
-            if (ActiveUsers.Any(user => user.Id == id))
-                return null;
+            var existingUser = ActiveUsers.Find(user => user.Id == id);
+            if (existingUser != null) 
+            {
+                existingUser.ConnectionId = connectionId;
+                return existingUser;
+            }
 
             var newUser = new User 
             { 

@@ -39,7 +39,7 @@ namespace signalr.Hubs
             return Clients.Client(connectionId).SendAsync("ReceiveMessage", message);
         }
 
-        public Task SendNewUserLoginMessage()
+        public Task NotifyRandomUserLogin()
         {
             var rand = new Random();
             var randomId = rand.Next(100);
@@ -51,17 +51,17 @@ namespace signalr.Hubs
                 );
 
             if (newUser != null)
-                return Clients.All.SendAsync("NewUserLoggedIn", _activeUserCollection.ActiveUsers);
+                return Clients.All.SendAsync("NotifyNewUserLogin", _activeUserCollection.ActiveUsers);
             
             return null;
         }
 
-        public Task StoreNewUserLogin(int id, string username)
+        public Task NotifyNewUserLogin(int id, string username)
         {
             var newUser = _activeUserCollection.NewUserLoggedIn(id, username, Context.ConnectionId);
 
             if (newUser != null)
-                return Clients.All.SendAsync("NewUserLoggedIn", _activeUserCollection.ActiveUsers);
+                return Clients.All.SendAsync("NotifyNewUserLogin", _activeUserCollection.ActiveUsers);
 
             return null;
         }
