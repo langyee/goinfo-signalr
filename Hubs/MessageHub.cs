@@ -66,16 +66,28 @@ namespace signalr.Hubs
             return null;
         }
 
+        public Task NotifyUserLogOut(int id)
+        {
+            _activeUserCollection.UserLoggedOut(id);
+
+            return Clients.All.SendAsync("NotifyUserLogout", _activeUserCollection.ActiveUsers);
+        }
+
         public override async Task OnConnectedAsync()
         {
             await Clients.All.SendAsync("UserConnected", Context.ConnectionId);
             await base.OnConnectedAsync();
         }
 
-        public override async Task OnDisconnectedAsync(Exception ex)
+        public override Task OnDisconnectedAsync(Exception ex)
         {
-            await Clients.All.SendAsync("UserDisconnected", Context.ConnectionId);
-            await base.OnDisconnectedAsync(ex);
+            var disconnectedUser = 
+                _activeUserCollection.ActiveUsers.Find(user => user.ConnectionId == Context.ConnectionId);
+            
+            _activeUserCollection.ActiveUsers.Remove(disconnectedUser);
+
+            Clients.All.SendAsync("UserDisconnected", _activeUserCollection.ActiveUsers);
+            return base.OnDisconnectedAsync(ex);
         }
     }
 }

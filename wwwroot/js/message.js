@@ -23,6 +23,23 @@ connection.on("ReceiveMessage", function(message) {
 });
 
 connection.on("NotifyNewUserLogin", (users) => {
+    console.warn("====== new user logged in ======");
+    for(let i = 0; i < users.length; i++) {
+        let user = users[i]; 
+        console.log(`${i}: ${user.username} logged in at ${user.connectedAt} for connection ${user.connectionId}`);
+    }
+});
+
+connection.on("NotifyUserLogout", (users) => {
+    console.warn("====== user logged out ======");
+    for(let i = 0; i < users.length; i++) {
+        let user = users[i]; 
+        console.log(`${i}: ${user.username} logged in at ${user.connectedAt} for connection ${user.connectionId}`);
+    }
+});
+
+connection.on("UserDisconnected", (users) => {
+    console.warn("====== user disconnected ======");
     for(let i = 0; i < users.length; i++) {
         let user = users[i]; 
         console.log(`${i}: ${user.username} logged in at ${user.connectedAt} for connection ${user.connectionId}`);
@@ -37,14 +54,14 @@ connection.on("UserConnected", function(connectionId) {
     groupElement.add(option);
 });
 
-connection.on("UserDisconnected", function(connectionId) {
-    var groupElement = document.getElementById("group");
-    for(var i = 0; i < groupElement.length; i++) {
-        if (groupElement.options[i].value == connectionId) {
-            groupElement.remove(i);
-        }
-    }
-});
+// connection.on("UserDisconnected", function(connectionId) {
+//     var groupElement = document.getElementById("group");
+//     for(var i = 0; i < groupElement.length; i++) {
+//         if (groupElement.options[i].value == connectionId) {
+//             groupElement.remove(i);
+//         }
+//     }
+// });
 
 connection.start().then(function () {
     document.getElementById("sendButton").disabled = false;
