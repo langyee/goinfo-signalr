@@ -27,8 +27,8 @@ namespace signalr
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
             services.AddSignalR();
+            services.AddRazorPages();
             services.AddControllers();
             services.AddSingleton<IActiveUserCollection, ActiveUserCollection>();
 
@@ -61,9 +61,9 @@ namespace signalr
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<MessageHub>("/messages");
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
-                endpoints.MapHub<MessageHub>("/messages");
             });
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
