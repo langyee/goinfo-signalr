@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using signalr.Hubs;
+using signalr.Services;
 
 namespace signalr
 {
@@ -27,6 +28,7 @@ namespace signalr
             services.AddRazorPages();
             services.AddSignalR();
             services.AddControllers();
+            services.AddSingleton<IActiveUserCollection, ActiveUserCollection>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
