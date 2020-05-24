@@ -99,6 +99,10 @@ namespace signalr.Hubs
             string sender, 
             string message)
         {
+            // TODO: categorize message here and send the respective message
+            // for example, if share journal, return SendAsync("ReceiveJournalMessage")
+            // else return SendAsync("ReceiveLogMessage")
+
             var newMessage = new CustomMessage 
             {
                 Sender = sender,
