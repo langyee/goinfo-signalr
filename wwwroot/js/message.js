@@ -36,17 +36,19 @@ connection.on("ReceiveMessage", function(message) {
 connection.on("NotifyNewUserLogin", (users) => {
     console.warn("====== new user logged in ======");
     activeUsers = users;
-
+    
+    $("#activeUsers").empty();
     const activeUserElement = document.getElementById("activeUsers");
-    const option = document.createElement("option");
-
+    
     for(let i = 0; i < users.length; i++) {
         let user = users[i]; 
         console.log(`${i}: ${user.username} logged in at ${user.connectedAt} for connection ${user.connectionId}`);
-
+        
+        const option = document.createElement("option");
         option.text = user.username;
         option.value = user.connectionId;
         activeUserElement.add(option);
+        console.log("adding option", user.username);
     }
 
     console.warn("====== active user list kept in js ======");
