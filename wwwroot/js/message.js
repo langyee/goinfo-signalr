@@ -1,12 +1,23 @@
 "use strict";
 
 class User {
-    constructor(id, username, connectedAt) {
+    constructor(id, username, connectedAt, connectionId) {
         this.id = id;
         this.username = username;
         this.connectedAt = connectedAt;
+        this.connectionId = connectionId;
     }
 }
+
+class CustomMessage {
+    constructor(sender, timestamp, message) {
+        this.Sender = sender;
+        this.Timestamp = timestamp;
+        this.Message = message;
+    }
+}
+
+let activeUsers = [];
 
 var connection = new signalR.HubConnectionBuilder()
                     .withUrl("/messages")
@@ -24,10 +35,22 @@ connection.on("ReceiveMessage", function(message) {
 
 connection.on("NotifyNewUserLogin", (users) => {
     console.warn("====== new user logged in ======");
+    activeUsers = users;
+
+    const activeUserElement = document.getElementById("activeUsers");
+    const option = document.createElement("option");
+
     for(let i = 0; i < users.length; i++) {
         let user = users[i]; 
         console.log(`${i}: ${user.username} logged in at ${user.connectedAt} for connection ${user.connectionId}`);
+
+        option.text = user.username;
+        option.value = user.connectionId;
+        activeUserElement.add(option);
     }
+
+    console.warn("====== active user list kept in js ======");
+    console.log(activeUsers);
 });
 
 connection.on("NotifyUserLogout", (users) => {
@@ -80,16 +103,16 @@ document.getElementById("sendButton").addEventListener("click", function(event) 
         var method = groupValue === "All" ? "SendMessageToAll" : "SendMessageToCaller";
 
         connection.invoke(method, message).catch(function (err) {
-            return console.error(err.ToString());
+            return console.error(err.toString());
         });
     } else if(groupValue === "PrivateGroup") {
         connection.invoke("SendMessageToGroup", "PrivateGroup", message)
             .catch(function(err) {
-                return console.error(err.ToString());
+                return console.error(err.toString());
             });
     } else {
         connection.invoke("SendMessageToUser", groupValue, message).catch(function(err) {
-            return console.error(err.ToString());
+            return console.error(err.toString());
         })
     }
     
@@ -98,8 +121,28 @@ document.getElementById("sendButton").addEventListener("click", function(event) 
 
 document.getElementById("joinGroup").addEventListener("click", function(event) {
     connection.invoke("JoinGroup", "PrivateGroup").catch(function(err) {
-        return console.error(err.ToString());
+        return console.error(err.toString());
     });
 
     event.preventDefault();
+});
+
+// Demo Custom Message Sending and Receiving
+
+document.getElementById("sendCustomMessageButton").addEventListener("click", event => {
+
+    const activeUserElement = document.getElementById("activeUsers");
+    const connectionId = activeUserElement.options[activeUserElement.selectedIndex].value;
+
+    connection
+        .invoke("SendCustomMessageToUser", 
+            connectionId, 
+            "demo sender",
+            "demo message")
+        .catch(err => console.error(err.toString()));
+});
+
+connection.on("ReceiveCustomMessage", message => {
+    console.warn("====== Custom Message Received ======");
+    console.log(message);
 });

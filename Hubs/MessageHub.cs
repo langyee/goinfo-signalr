@@ -2,17 +2,26 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using signalr.Services;
+using signalr.Models;
 
 namespace signalr.Hubs
 {
     public class MessageHub : Hub
     {
+        #region Property
+
         private IActiveUserCollection _activeUserCollection;
 
         public MessageHub(IActiveUserCollection activeUserCollection)
         {
             _activeUserCollection = activeUserCollection;
         }
+
+        #endregion
+
+        #region Action
+
+        #region Plain Message
 
         public Task SendMessageToAll(string message)
         {
@@ -38,6 +47,10 @@ namespace signalr.Hubs
         {
             return Clients.Client(connectionId).SendAsync("ReceiveMessage", message);
         }
+
+        #endregion
+
+        #region User Connected
 
         public Task NotifyRandomUserLogin()
         {
@@ -66,12 +79,39 @@ namespace signalr.Hubs
             return null;
         }
 
+        #endregion
+
+        #region User Disconnected
+
         public Task NotifyUserLogOut(int id)
         {
             _activeUserCollection.UserLoggedOut(id);
 
             return Clients.All.SendAsync("NotifyUserLogout", _activeUserCollection.ActiveUsers);
         }
+
+        #endregion
+
+        #region Share Message Object
+
+        public Task SendCustomMessageToUser(
+            string connectionId, 
+            string sender, 
+            string message)
+        {
+            var newMessage = new CustomMessage 
+            {
+                Sender = sender,
+                Timestamp = DateTime.Now,
+                Content = message
+            };
+
+            return Clients.Client(connectionId).SendAsync("ReceiveCustomMessage", newMessage);
+        }
+
+        #endregion
+
+        #region Default Life Cycle
 
         public override async Task OnConnectedAsync()
         {
@@ -89,5 +129,9 @@ namespace signalr.Hubs
             Clients.All.SendAsync("UserDisconnected", _activeUserCollection.ActiveUsers);
             return base.OnDisconnectedAsync(ex);
         }
+
+        #endregion
+
+        #endregion
     }
 }
