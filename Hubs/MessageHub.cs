@@ -103,14 +103,16 @@ namespace signalr.Hubs
             // for example, if share journal, return SendAsync("ReceiveJournalMessage")
             // else return SendAsync("ReceiveLogMessage")
 
-            var newMessage = new CustomMessage 
-            {
-                Sender = sender,
-                Timestamp = DateTime.Now,
-                Content = message
-            };
+            var newMessage = MessageCategorizer.Evaluate(message);
 
-            return Clients.Client(connectionId).SendAsync("ReceiveCustomMessage", newMessage);
+            switch (newMessage)
+            {
+                case JournalMessage journalMessage:
+                    return Clients.Client(connectionId).SendAsync("ReceiveJournalMessage", journalMessage);
+                default:
+                    var customMessage = newMessage as CustomMessage;
+                    return Clients.Client(connectionId).SendAsync("ReceiveCustomMessage", customMessage);
+            }
         }
 
         #endregion
