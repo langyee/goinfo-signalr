@@ -19,8 +19,6 @@ namespace signalr.Hubs
 
                 return new JournalMessage 
                 {
-                    Sender = sender,
-                    Timestamp = DateTime.Now,
                     Corpsno = corpsno,
                     Corpname = corpname,
                     Sdate = sdate, 

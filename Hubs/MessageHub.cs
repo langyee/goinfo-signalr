@@ -94,6 +94,27 @@ namespace signalr.Hubs
 
         #region Share Message Object
 
+        public Task ShareJournalWithUser(
+            string connectionId,
+            string sender, 
+            string bodyTitle,
+            string bodyContent,
+            string additionalMessage)
+        {
+            var listOfMessages = bodyContent.Split("--");
+            JournalMessage journalMessage = new JournalMessage 
+            {
+                Corpsno = Int32.Parse(listOfMessages[0]),
+                Corpname = listOfMessages[1],
+                Sdate = Convert.ToDateTime(listOfMessages[2]),
+                Serno = listOfMessages[3],
+                Id = Int32.Parse(listOfMessages[4]),
+                Sender = sender
+            };
+
+            return Clients.Client(connectionId).SendAsync("ReceiveJournalMessage", journalMessage);
+        }
+
         public Task SendCustomMessageToUser(
             string connectionId, 
             string sender, 
