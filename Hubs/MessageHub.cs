@@ -2,17 +2,26 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using signalr.Services;
+using signalr.Models;
 
 namespace signalr.Hubs
 {
     public class MessageHub : Hub
     {
+        #region Property
+
         private IActiveUserCollection _activeUserCollection;
 
         public MessageHub(IActiveUserCollection activeUserCollection)
         {
             _activeUserCollection = activeUserCollection;
         }
+
+        #endregion
+
+        #region Action
+
+        #region Plain Message
 
         public Task SendMessageToAll(string message)
         {
@@ -38,6 +47,10 @@ namespace signalr.Hubs
         {
             return Clients.Client(connectionId).SendAsync("ReceiveMessage", message);
         }
+
+        #endregion
+
+        #region User Connected
 
         public Task NotifyRandomUserLogin()
         {
@@ -66,12 +79,68 @@ namespace signalr.Hubs
             return null;
         }
 
+        #endregion
+
+        #region User Disconnected
+
         public Task NotifyUserLogOut(int id)
         {
             _activeUserCollection.UserLoggedOut(id);
 
             return Clients.All.SendAsync("NotifyUserLogout", _activeUserCollection.ActiveUsers);
         }
+
+        #endregion
+
+        #region Share Message Object
+
+        public Task ShareJournalWithUser(
+            string connectionId,
+            string sender, 
+            string bodyTitle,
+            string bodyContent,
+            string additionalMessage)
+        {
+            var listOfMessages = bodyContent.Split("--");
+            JournalMessage journalMessage = new JournalMessage 
+            {
+                Corpsno = Int32.Parse(listOfMessages[0]),
+                Corpname = listOfMessages[1],
+                Sdate = Convert.ToDateTime(listOfMessages[2]),
+                Serno = listOfMessages[3],
+                Id = Int32.Parse(listOfMessages[4]),
+                Title = bodyTitle,
+                Sender = sender,
+                AdditaionalMessage = additionalMessage
+            };
+
+            return Clients.Client(connectionId).SendAsync("ReceiveJournalMessage", journalMessage);
+        }
+
+        public Task SendCustomMessageToUser(
+            string connectionId, 
+            string sender, 
+            string message)
+        {
+            // TODO: categorize message here and send the respective message
+            // for example, if share journal, return SendAsync("ReceiveJournalMessage")
+            // else return SendAsync("ReceiveLogMessage")
+
+            var newMessage = MessageCategorizer.Evaluate(message);
+
+            switch (newMessage)
+            {
+                case JournalMessage journalMessage:
+                    return Clients.Client(connectionId).SendAsync("ReceiveJournalMessage", journalMessage);
+                default:
+                    var customMessage = newMessage as CustomMessage;
+                    return Clients.Client(connectionId).SendAsync("ReceiveCustomMessage", customMessage);
+            }
+        }
+
+        #endregion
+
+        #region Default Life Cycle
 
         public override async Task OnConnectedAsync()
         {
@@ -89,5 +158,9 @@ namespace signalr.Hubs
             Clients.All.SendAsync("UserDisconnected", _activeUserCollection.ActiveUsers);
             return base.OnDisconnectedAsync(ex);
         }
+
+        #endregion
+
+        #endregion
     }
 }

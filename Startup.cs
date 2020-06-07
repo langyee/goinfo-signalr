@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,10 +27,14 @@ namespace signalr
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
             services.AddSignalR();
+            services.AddRazorPages();
             services.AddControllers();
             services.AddSingleton<IActiveUserCollection, ActiveUserCollection>();
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,10 +60,17 @@ namespace signalr
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<MessageHub>("/messages");
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
-                endpoints.MapHub<MessageHub>("/messages");
             });
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor 
+                    | ForwardedHeaders.XForwardedProto
+            });
+
         }
     }
 }
