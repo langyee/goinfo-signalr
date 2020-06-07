@@ -9,6 +9,8 @@ namespace signalr.Models
         public DateTime Sdate { get; set; }
         public string Serno { get; set; }
         public int Id { get; set; }
+        public string Title { get; set; }
         public string Sender { get; set; }
+        public string AdditaionalMessage { get; set; }
     }
 }

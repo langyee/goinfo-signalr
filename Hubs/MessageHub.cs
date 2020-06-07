@@ -109,7 +109,9 @@ namespace signalr.Hubs
                 Sdate = Convert.ToDateTime(listOfMessages[2]),
                 Serno = listOfMessages[3],
                 Id = Int32.Parse(listOfMessages[4]),
-                Sender = sender
+                Title = bodyTitle,
+                Sender = sender,
+                AdditaionalMessage = additionalMessage
             };
 
             return Clients.Client(connectionId).SendAsync("ReceiveJournalMessage", journalMessage);
