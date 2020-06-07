@@ -31,7 +31,6 @@ namespace signalr
             services.AddRazorPages();
             services.AddControllers();
             services.AddSingleton<IActiveUserCollection, ActiveUserCollection>();
-
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
