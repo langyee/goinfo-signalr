@@ -1,13 +1,13 @@
 version: '3.7'
 
 services:
-        nginx:
-            build: 
-                context: ../
-                dockerfile: ./deploy/nginx/Dockerfile
-            container_name: signalr-nginx
-            ports:
-                - "2910:2910"
+        # nginx:
+        #     build: 
+        #         context: ../
+        #         dockerfile: ./deploy/nginx/Dockerfile
+        #     container_name: signalr-nginx
+        #     ports:
+        #         - "2910:2910"
         
         app:
             build:
