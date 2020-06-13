@@ -2,17 +2,17 @@ version: '3.7'
 
 services:
     signalr-nginx:
-            build: 
-                context: ../
-                dockerfile: ./deploy/nginx/Dockerfile
-            container_name: signalr-nginx
-            ports:
-                - "2910:2910"
-        
-        app:
-            build:
-                context: ../
-                dockerfile:  ./deploy/app/Dockerfile
-            container_name: signalr-app
-            ports: 
-                - "5001:5001"
+        build: 
+            context: ../
+            dockerfile: ./deploy/nginx/Dockerfile
+        container_name: signalr-nginx
+        ports:
+            - "2910:2910"
+    
+    app:
+        build:
+            context: ../
+            dockerfile:  ./deploy/app/Dockerfile
+        container_name: signalr-app
+        ports: 
+            - "5001:5001"
