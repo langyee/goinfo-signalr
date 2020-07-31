@@ -1,0 +1,37 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    <div>
+        <input type="button" id="joinGroup" value="Join Private Group"/>
+    </div>
+
+    <textarea name="message" id="message"></textarea>
+    <select id="group">
+        <option value="All">Everyone</option>
+        <option value="Myself">Myself</option>
+        <option value="PrivateGroup">Private Group</option>
+    </select>
+    <input type="button" id="sendButton" value="Send Message"/>
+    <div id="messages"></div>
+
+    <h1 class="display-4">Custom Message</h1>
+    <h2 class="display-4" id="currentUser">Current User</h2>
+    <textarea name="customMessage" id="customMessage"></textarea>
+    <br/>
+    <select id="activeUsers"></select>
+    <br/>
+    <input type="button" id="sendCustomMessageButton" value="Send Custom Message"/>
+
+    </select>
+
+</div>
+
+<script src="~/js/signalr.js"></script>
+<script src="~/js/message.js"></script>
