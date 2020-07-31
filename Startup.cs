@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using signalr.Hubs;
+using signalr.Models;
 using signalr.Services;
 
 namespace signalr
@@ -35,6 +37,16 @@ namespace signalr
             {
                 options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
             });
+
+            // requires using Microsoft.Extensions.Options
+            services.Configure<MessageDatabaseSettings>(
+                Configuration.GetSection(nameof(MessageDatabaseSettings)));
+
+            services.AddSingleton<IMessageDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<MessageDatabaseSettings>>().Value);
+
+            // Add Message Service
+            services.AddSingleton<MessageService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
