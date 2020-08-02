@@ -40,14 +40,7 @@ namespace signalr
                 options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
             });
 
-            // MSFT docs, requires using Microsoft.Extensions.Options
-            services.Configure<MessageDatabaseSettings>(
-                Configuration.GetSection(nameof(MessageDatabaseSettings)));
-
-            services.AddSingleton<IMessageDatabaseSettings>(sp =>
-                sp.GetRequiredService<IOptions<MessageDatabaseSettings>>().Value);
-
-            services.AddSingleton<MessageService>();
+            #region Mongo service settings
 
             // Configure MongoDB service in Data project
             services.Configure<MongoSettings>(
@@ -60,6 +53,21 @@ namespace signalr
 
             // Configure repository services
             services.AddScoped<IJournalMessageRepository, JournalMessageRepository>();
+
+            #endregion
+
+            #region Dormant Mongo service settings
+
+            // MSFT docs, requires using Microsoft.Extensions.Options
+            services.Configure<MessageDatabaseSettings>(
+                Configuration.GetSection(nameof(MessageDatabaseSettings)));
+
+            services.AddSingleton<IMessageDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<MessageDatabaseSettings>>().Value);
+
+            services.AddSingleton<MessageService>();
+
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
