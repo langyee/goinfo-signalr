@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Data
 {
-    class MongoSettings
+    public class MongoSettings : IMongoSettings
     {
         public string ConnectionString { get; set; }
         public string DatabaseName { get; set; }

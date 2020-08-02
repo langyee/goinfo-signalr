@@ -4,13 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shared.Models
+namespace Shared.Entities
 {
     public class JournalMessage
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public int Id { get; set; }
+        public string Id { get; set; }
         public int Corpsno { get; set; }
         public string Corpname { get; set; }
         public DateTime Sdate { get; set; }

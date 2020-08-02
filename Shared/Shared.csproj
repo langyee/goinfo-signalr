@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Models\z3xx1tbb.mhh~" />
+    <None Remove="Entities\z3xx1tbb.mhh~" />
   </ItemGroup>
 
   <ItemGroup>

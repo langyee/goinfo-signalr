@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Data;
+using Data.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -38,15 +40,26 @@ namespace signalr
                 options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
             });
 
-            // requires using Microsoft.Extensions.Options
+            // MSFT docs, requires using Microsoft.Extensions.Options
             services.Configure<MessageDatabaseSettings>(
                 Configuration.GetSection(nameof(MessageDatabaseSettings)));
 
             services.AddSingleton<IMessageDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<MessageDatabaseSettings>>().Value);
 
-            // Add Message Service
             services.AddSingleton<MessageService>();
+
+            // Configure MongoDB service in Data project
+            services.Configure<MongoSettings>(
+                Configuration.GetSection(nameof(MongoSettings)));
+
+            services.AddSingleton<IMongoSettings>(sp =>
+                sp.GetRequiredService<IOptions<MongoSettings>>().Value);
+
+            services.AddSingleton<IMongoDBContext, MongoDBContext>();
+
+            // Configure repository services
+            services.AddScoped<IJournalMessageRepository, JournalMessageRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
