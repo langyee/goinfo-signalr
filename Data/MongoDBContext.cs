@@ -20,6 +20,11 @@ namespace Data
 
         public IMongoCollection<T> GetCollection<T>(string name)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                return null;
+            }
+
             return _db.GetCollection<T>(name);
         }
     }
