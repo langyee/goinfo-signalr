@@ -40,5 +40,10 @@ namespace Data.UnitTest
 
             return context;
         }
+
+        public Mock<IMongoDBContext> GetMockDBContext()
+        {
+            return new Mock<IMongoDBContext>();
+        }
     }
 }
