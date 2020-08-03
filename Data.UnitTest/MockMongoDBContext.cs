@@ -9,41 +9,22 @@ namespace Data.UnitTest
 {
     public class MockMongoDBContext
     {
-        private Mock<IOptions<MongoSettings>> _mockOptions;
-
-        private Mock<IMongoDatabase> _mockDB;
-
-        private Mock<IMongoClient> _mockClient;
-
-
-        public MockMongoDBContext()
+        public static Mock<IMongoDBContext> GetMockDBContext()
         {
-            _mockOptions = new Mock<IOptions<MongoSettings>>();
-            _mockDB = new Mock<IMongoDatabase>();
-            _mockClient = new Mock<IMongoClient>();
+            return new Mock<IMongoDBContext>();
         }
 
-        public MongoDBContext GetDBContext()
+        public static MongoDBContext GetTestDBContext()
         {
             var settings = new MongoSettings()
             {
-                ConnectionString = "mongodb://testDb",
+                ConnectionString = "mongodb://localhost:27017",
                 DatabaseName = "TestMessageStoreDb"
             };
 
-            _mockOptions.Setup(s => s.Value).Returns(settings);
-            _mockClient.Setup(c =>
-                c.GetDatabase(_mockOptions.Object.Value.DatabaseName, null))
-                .Returns(_mockDB.Object);
-
-            var context = new MongoDBContext(_mockOptions.Object.Value);
+            var context = new MongoDBContext(settings);
 
             return context;
-        }
-
-        public Mock<IMongoDBContext> GetMockDBContext()
-        {
-            return new Mock<IMongoDBContext>();
         }
     }
 }

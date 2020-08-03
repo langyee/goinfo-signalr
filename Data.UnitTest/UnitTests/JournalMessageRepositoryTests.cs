@@ -15,7 +15,7 @@ namespace Data.UnitTest.UnitTests
     public class JournalMessageRepositoryTests
     {
         private Mock<IMongoCollection<JournalMessage>> _mockCollection = new Mock<IMongoCollection<JournalMessage>>();
-        private Mock<IMongoDBContext> _mockDBContext = new MockMongoDBContext().GetMockDBContext();
+        private Mock<IMongoDBContext> _mockDBContext = MockMongoDBContext.GetMockDBContext();
         private JournalMessage _message = new JournalMessage
         {
             Corpname = "Test Name"
@@ -36,7 +36,7 @@ namespace Data.UnitTest.UnitTests
                 await messageRepo.Create(_message);
 
                 _mockCollection.Verify(c => c.InsertOneAsync(_message, null, default(CancellationToken)), Times.Once);
-            });
+            }).GetAwaiter().GetResult();
         }
 
         [TestMethod]
@@ -49,7 +49,22 @@ namespace Data.UnitTest.UnitTests
             Task.Run(async () =>
             {
                 await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => messageRepo.Create(_message));
-            });
+            }).GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        public void JournalMessageRepository_Create_Valid_NewMessage_In_DB()
+        {
+            var testContext = MockMongoDBContext.GetTestDBContext();
+            var messageRepo = new JournalMessageRepository(testContext);
+
+            Task.Run(async () =>
+            {
+                await messageRepo.Create(_message);
+
+                Assert.IsTrue(true);
+            }).GetAwaiter().GetResult();
+
         }
     }
 }
