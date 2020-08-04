@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Data.UnitTest.UnitTests
 {
     [TestClass]
-    public class JournalMessageRepositoryTests
+    public class JournalMessageRepositoryMockContextTests
     {
         private Mock<IMongoCollection<JournalMessage>> _mockCollection = new Mock<IMongoCollection<JournalMessage>>();
         private Mock<IMongoDBContext> _mockDBContext = MockMongoDBContext.GetMockDBContext();
@@ -20,6 +20,8 @@ namespace Data.UnitTest.UnitTests
         {
             Corpname = "Test Name"
         };
+
+        #region Mock Context
 
         [TestMethod]
         public void JournalMessageRepository_CreateNewMessage_Valid_Success()
@@ -52,19 +54,6 @@ namespace Data.UnitTest.UnitTests
             }).GetAwaiter().GetResult();
         }
 
-        [TestMethod]
-        public void JournalMessageRepository_Create_Valid_NewMessage_In_DB()
-        {
-            var testContext = MockMongoDBContext.GetTestDBContext();
-            var messageRepo = new JournalMessageRepository(testContext);
-
-            Task.Run(async () =>
-            {
-                await messageRepo.Create(_message);
-
-                Assert.IsTrue(true);
-            }).GetAwaiter().GetResult();
-
-        }
+        #endregion
     }
 }

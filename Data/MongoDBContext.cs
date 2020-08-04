@@ -27,5 +27,17 @@ namespace Data
 
             return _db.GetCollection<T>(name);
         }
+
+        public IEnumerable<string> ListDatabaseNames()
+        {
+            var dbNameList = _mongoClient.ListDatabaseNames().ToList<string>();
+
+            return dbNameList;
+        }
+
+        public void DropDatabase(string databaseName)
+        {
+            _mongoClient.DropDatabase(databaseName);
+        }
     }
 }
