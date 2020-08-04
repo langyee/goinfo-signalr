@@ -29,14 +29,15 @@ namespace Data.UnitTest.UnitTests
             Task.Run(async () =>
             {
                 await messageRepo.Create(message);
+                await messageRepo.DeleteAllDocuments();
             }).GetAwaiter().GetResult();
         }
 
-        //[TestCleanup]
-        //public void testCleanup()
-        //{
-        //    _testContext.DropDatabase(TESTDBNAME);
-        //}
+        [TestCleanup]
+        public void testCleanup()
+        {
+            _testContext.DropDatabase(TESTDBNAME);
+        }
 
         [TestMethod]
         public void TestDBName_Exists()
@@ -50,19 +51,21 @@ namespace Data.UnitTest.UnitTests
         public void JournalMessageRepository_Create_Valid_NewMessage_In_DB()
         {
             var messageRepo = new JournalMessageRepository(_testContext);
+            var id = "551582c558c7b4fbacf16735";
+            var corpName = "CorpA";
             var message = new JournalMessage()
             {
-                Corpname = "Corp A"
+                Id = id,
+                Corpname = corpName
             };
 
             Task.Run(async () =>
             {
                 await messageRepo.Create(message);
+                var messageInDb = await messageRepo.Get(id);
+                Assert.AreEqual(corpName, messageInDb.Corpname);
 
-                Assert.IsTrue(true);
             }).GetAwaiter().GetResult();
-
-
         }
     }
 }

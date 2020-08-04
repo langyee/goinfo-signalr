@@ -18,6 +18,8 @@ namespace Data.Repository
             _dbCollection = _mongoContext.GetCollection<TEntity>(typeof(TEntity).Name);
         }
 
+        #region Create, Update, Delete
+
         public async Task Create(TEntity entity)
         {
             if (entity == null)
@@ -35,10 +37,20 @@ namespace Data.Repository
             _dbCollection.DeleteOneAsync(Builders<TEntity>.Filter.Eq("_id", objectId));
         }
 
+        public async Task DeleteAllDocuments()
+        {
+            var filter = new BsonDocument();
+            await _dbCollection.DeleteManyAsync(filter);
+        }
+
         public virtual void Update(TEntity entity)
         {
             _dbCollection.ReplaceOneAsync(Builders<TEntity>.Filter.Eq("_id", entity), entity);
         }
+
+        #endregion
+
+        #region Get
 
         public async Task<TEntity> Get(string id)
         {
@@ -53,5 +65,7 @@ namespace Data.Repository
             var all = await _dbCollection.FindAsync(Builders<TEntity>.Filter.Empty);
             return await all.ToListAsync();
         }
+
+        #endregion
     }
 }
